@@ -1,0 +1,14 @@
+{
+  "firestore": [
+    {
+      "database": "ai-studio-android-derashan-f3d4b6f1-665c-405a-94ee-cf62c31e8672",
+      "rules": "firestore.rules"
+    }
+  ],
+  "emulators": {
+    "firestore": {
+      "port": 8085
+    },
+    "singleProjectMode": true
+  }
+}

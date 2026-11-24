@@ -1,0 +1,318 @@
+{
+  "projectId": "gen-lang-client-0444103939",
+  "databaseId": "ai-studio-android-derashan-f3d4b6f1-665c-405a-94ee-cf62c31e8672",
+  "packageNames": [
+    "com.aistudio.derashanwari.kxmpqz",
+    "com.derashanwari.admin",
+    "com.derashanwari.user",
+    "com.derashanwari.rider"
+  ],
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized Dera Shanwari Admin user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "email", "role", "active", "createdAt"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer profile authenticated via Google Sign-In",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "active": { "type": "boolean" },
+        "loyaltyPoints": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "active", "loyaltyPoints", "createdAt"]
+    },
+    "Rider": {
+      "title": "Rider",
+      "description": "Delivery rider profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "linkedUid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "vehicleInfo": { "type": "string" },
+        "profileImageUrl": { "type": "string" },
+        "active": { "type": "boolean" },
+        "totalDeliveries": { "type": "integer" },
+        "totalEarnings": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "linkedUid", "name", "phone", "active", "totalDeliveries", "totalEarnings", "createdAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Menu category with ImageKit photo reference",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "imageFileId": { "type": "string" },
+        "localDrawableName": { "type": "string" },
+        "available": { "type": "boolean" },
+        "sortOrder": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "available", "sortOrder", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Restaurant food dish supporting configurable variants",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "imageFileId": { "type": "string" },
+        "localDrawableName": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "categoryName": { "type": "string" },
+        "available": { "type": "boolean" },
+        "featured": { "type": "boolean" },
+        "popular": { "type": "boolean" },
+        "variants": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "price", "discountPrice", "categoryId", "categoryName", "available", "createdAt"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Promotional home banner",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "imageFileId": { "type": "string" },
+        "localDrawableName": { "type": "string" },
+        "active": { "type": "boolean" },
+        "sortOrder": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "active", "sortOrder", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Food order with immutable server timestamps, print tracking, and variants",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "deliveryAddress": { "type": "string" },
+        "notes": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "deliveryFee": { "type": "number" },
+        "discountAmount": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "orderStatus": { "type": "string" },
+        "riderId": { "type": "string" },
+        "riderName": { "type": "string" },
+        "pointsEarned": { "type": "integer" },
+        "timestamps": { "type": "object" },
+        "printCount": { "type": "integer" },
+        "lastPrintedAt": { "type": "string", "format": "date-time" },
+        "lastPrintedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["orderId", "customerId", "customerName", "customerPhone", "deliveryAddress", "items", "subtotal", "deliveryFee", "totalAmount", "paymentMethod", "paymentStatus", "orderStatus", "createdAt", "updatedAt"]
+    },
+    "OrderTimelineEvent": {
+      "title": "OrderTimelineEvent",
+      "description": "Immutable lifecycle event recorded for an order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "eventType": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" },
+        "userRole": { "type": "string" },
+        "userName": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "orderId", "eventType", "timestamp", "userId", "userRole", "userName"]
+    },
+    "GroupChatMember": {
+      "title": "GroupChatMember",
+      "description": "Privacy-safe presence and read cursor for Official Group Chat",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "profileImageUrl": { "type": "string" },
+        "online": { "type": "boolean" },
+        "lastSeenAt": { "type": "string", "format": "date-time" },
+        "lastReadAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "role", "online", "lastSeenAt", "lastReadAt"]
+    },
+    "GroupChatMessage": {
+      "title": "GroupChatMessage",
+      "description": "Universal Official Group message shared across Admin, Customer, and Rider apps",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "senderAvatarUrl": { "type": "string" },
+        "message": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "senderId", "senderName", "senderRole", "createdAt"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Order payment record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "method": { "type": "string" },
+        "accountTitle": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "orderId", "customerId", "method", "amount", "status", "createdAt"]
+    },
+    "RestaurantSettings": {
+      "title": "RestaurantSettings",
+      "description": "Restaurant business profile, fees, and public ImageKit upload endpoint config",
+      "type": "object",
+      "properties": {
+        "restaurantName": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "openingHours": { "type": "string" },
+        "closingHours": { "type": "string" },
+        "deliveryCharges": { "type": "number" },
+        "minimumOrderAmount": { "type": "number" },
+        "loyaltyPointsPercent": { "type": "integer" },
+        "imagekitPublicKey": { "type": "string" },
+        "imagekitAuthEndpoint": { "type": "string" }
+      },
+      "required": ["restaurantName", "phone", "whatsappNumber", "deliveryCharges", "minimumOrderAmount"]
+    },
+    "PaymentMethodConfig": {
+      "title": "PaymentMethodConfig",
+      "description": "Enabled payment method details",
+      "type": "object",
+      "properties": {
+        "methodCode": { "type": "string" },
+        "displayName": { "type": "string" },
+        "accountTitle": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "instructions": { "type": "string" }
+      },
+      "required": ["methodCode", "displayName", "enabled"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Real-time order and dispatch chat messages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "riderId": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "senderName": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "orderId", "senderId", "senderRole", "senderName", "message", "createdAt"]
+    },
+    "NotificationItem": {
+      "title": "NotificationItem",
+      "description": "Real-time cross-app notification event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "targetRole": { "type": "string" },
+        "targetUid": { "type": "string" },
+        "senderId": { "type": "string" },
+        "orderId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "targetRole", "targetUid", "senderId", "title", "body", "read", "createdAt"]
+    },
+    "Reward": {
+      "title": "Reward",
+      "description": "Loyalty points ledger and redeemable offers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "points": { "type": "integer" },
+        "type": { "type": "string" },
+        "redeemable": { "type": "boolean" },
+        "requiredPoints": { "type": "integer" },
+        "orderId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "points", "type", "redeemable", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": { "schema": "AdminUser", "description": "Admin accounts" },
+    "/customers/{userId}": { "schema": "Customer", "description": "Customer profiles" },
+    "/riders/{riderId}": { "schema": "Rider", "description": "Delivery riders" },
+    "/categories/{categoryId}": { "schema": "Category", "description": "Food categories" },
+    "/products/{productId}": { "schema": "Product", "description": "Menu products with variants" },
+    "/banners/{bannerId}": { "schema": "Banner", "description": "Promotional banners" },
+    "/orders/{orderId}": { "schema": "Order", "description": "Customer food orders with timestamps and print metadata" },
+    "/orders/{orderId}/timeline/{eventId}": { "schema": "OrderTimelineEvent", "description": "Immutable lifecycle timeline events" },
+    "/payments/{paymentId}": { "schema": "Payment", "description": "Payment records" },
+    "/settings/{settingId}": { "schema": "RestaurantSettings", "description": "Restaurant configuration" },
+    "/payment_methods/{methodId}": { "schema": "PaymentMethodConfig", "description": "Payment methods" },
+    "/chats/{messageId}": { "schema": "ChatMessage", "description": "Order & Admin-Rider chat messages" },
+    "/chatRooms/mainGroup/members/{memberId}": { "schema": "GroupChatMember", "description": "Official Group Chat privacy-safe presence & read state" },
+    "/chatRooms/mainGroup/messages/{messageId}": { "schema": "GroupChatMessage", "description": "Official Group Chat shared messages" },
+    "/notifications/{notificationId}": { "schema": "NotificationItem", "description": "Real-time cross-app alerts" },
+    "/rewards/{rewardId}": { "schema": "Reward", "description": "Loyalty rewards and offers" }
+  }
+}

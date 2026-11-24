@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "209951760481",
+    "project_id": "derahanwari-4219c",
+    "storage_bucket": "derahanwari-4219c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209951760481:android:05e37813c2819234d28a20",
+        "android_client_info": {
+          "package_name": "com.derashanwari.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATPok0KLL7b-E3ZKfdu9RsATve5rwmqLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209951760481:android:522193e963bb5d07d28a20",
+        "android_client_info": {
+          "package_name": "com.derashanwari.seerey"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATPok0KLL7b-E3ZKfdu9RsATve5rwmqLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

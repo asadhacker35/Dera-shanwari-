@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rider_bg_dark">#FFFBF9F6</color>
+    <color name="rider_canvas">#FFFBF9F6</color>
+    <color name="rider_surface">#EBFFFFFF</color>
+    <color name="rider_glass_card">#EBFFFFFF</color>
+    <color name="rider_glass_amber">#FFFFF4EB</color>
+    <color name="rider_surface_alt">#FFFFEFE3</color>
+    <color name="rider_orange">#FFFF6B00</color>
+    <color name="rider_orange_dark">#FFE05500</color>
+    <color name="rider_amber">#FFF59E0B</color>
+    <color name="rider_white">#FFFFFFFF</color>
+    <color name="rider_text_primary">#FF111827</color>
+    <color name="rider_muted">#FF4B5563</color>
+    <color name="rider_success">#FF16A34A</color>
+    <color name="rider_info">#FF0284C7</color>
+    <color name="rider_danger">#FFDC2626</color>
+</resources>

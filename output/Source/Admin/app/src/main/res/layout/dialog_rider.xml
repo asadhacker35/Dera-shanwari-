@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_glass_card"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <EditText
+        android:id="@+id/et_rider_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Rider Full Name" />
+
+    <EditText
+        android:id="@+id/et_rider_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Rider Phone (03XXXXXXXXX)"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/et_rider_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Rider Google Email (optional, links Rider App)"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/et_rider_vehicle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Vehicle Info (e.g. Honda CD-70)" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_rider_active"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="true"
+        android:text="Active Account" />
+</LinearLayout>

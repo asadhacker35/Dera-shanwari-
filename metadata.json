@@ -1,0 +1,6 @@
+{
+  "name": "Dera Shanwari",
+  "description": "Dera Shanwari Restaurant Suite - Customer Ordering, Admin Management, and Rider Delivery Android Apps in Java & XML.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

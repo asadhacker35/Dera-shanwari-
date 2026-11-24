@@ -1,0 +1,576 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isBootstrappedAdminEmail() {
+      return isSignedIn()
+        && 'email_verified' in request.auth.token
+        && 'email' in request.auth.token
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'asadhacker770@gmail.com';
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        isBootstrappedAdminEmail()
+        || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string
+        && id.size() >= 1
+        && id.size() <= 128
+        && id.matches('^[a-zA-Z0-9_-]+$');
+    }
+
+    function isValidString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isValidOptionalString(val, maxLen) {
+      return val is string && val.size() <= maxLen;
+    }
+
+    function isValidUrlOrEmpty(val) {
+      return val is string
+        && val.size() <= 1000
+        && (val.size() == 0 || val.matches('^https?://.*') || val.matches('^local://.*'));
+    }
+
+    function isValidTimestamp(ts) {
+      return ts is timestamp && ts <= request.time;
+    }
+
+    function isValidAdmin(d) {
+      return d.keys().hasAll(['id', 'name', 'email', 'phone', 'role', 'active', 'createdAt'])
+        && d.keys().hasOnly(['id', 'name', 'email', 'phone', 'role', 'active', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidString(d.name, 1, 120)
+        && isValidString(d.email, 3, 200)
+        && isValidOptionalString(d.phone, 40)
+        && isValidString(d.role, 1, 60)
+        && d.active is bool
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidCustomer(d) {
+      return d.keys().hasAll(['id', 'name', 'phone', 'address', 'active', 'loyaltyPoints', 'createdAt'])
+        && d.keys().hasOnly(['id', 'name', 'email', 'phone', 'address', 'active', 'loyaltyPoints', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidString(d.name, 1, 120)
+        && (!d.keys().hasAny(['email']) || isValidOptionalString(d.email, 200))
+        && isValidOptionalString(d.phone, 40)
+        && isValidOptionalString(d.address, 400)
+        && d.active is bool
+        && d.loyaltyPoints is int
+        && d.loyaltyPoints >= 0
+        && d.loyaltyPoints <= 1000000
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidRider(d) {
+      return d.keys().hasAll(['id', 'linkedUid', 'name', 'phone', 'vehicleInfo', 'profileImageUrl', 'active', 'totalDeliveries', 'totalEarnings', 'createdAt'])
+        && d.keys().hasOnly(['id', 'linkedUid', 'name', 'email', 'phone', 'vehicleInfo', 'profileImageUrl', 'active', 'totalDeliveries', 'totalEarnings', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidOptionalString(d.linkedUid, 128)
+        && isValidString(d.name, 1, 120)
+        && (!d.keys().hasAny(['email']) || isValidOptionalString(d.email, 200))
+        && isValidOptionalString(d.phone, 40)
+        && isValidOptionalString(d.vehicleInfo, 160)
+        && isValidUrlOrEmpty(d.profileImageUrl)
+        && d.active is bool
+        && d.totalDeliveries is int && d.totalDeliveries >= 0 && d.totalDeliveries <= 1000000
+        && d.totalEarnings is number && d.totalEarnings >= 0 && d.totalEarnings <= 100000000
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidCategory(d) {
+      return d.keys().hasAll(['id', 'name', 'imageUrl', 'localDrawableName', 'available', 'sortOrder', 'createdAt'])
+        && d.keys().hasOnly(['id', 'name', 'imageUrl', 'imageFileId', 'localDrawableName', 'available', 'sortOrder', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidString(d.name, 1, 100)
+        && isValidUrlOrEmpty(d.imageUrl)
+        && (!d.keys().hasAny(['imageFileId']) || isValidOptionalString(d.imageFileId, 160))
+        && isValidOptionalString(d.localDrawableName, 80)
+        && d.available is bool
+        && d.sortOrder is int && d.sortOrder >= 0 && d.sortOrder <= 10000
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidProduct(d) {
+      return d.keys().hasAll(['id', 'name', 'description', 'price', 'discountPrice', 'imageUrl', 'localDrawableName', 'categoryId', 'categoryName', 'available', 'featured', 'popular', 'createdAt'])
+        && d.keys().hasOnly(['id', 'name', 'description', 'price', 'discountPrice', 'imageUrl', 'imageFileId', 'localDrawableName', 'categoryId', 'categoryName', 'available', 'featured', 'popular', 'variants', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidString(d.name, 1, 160)
+        && isValidOptionalString(d.description, 1500)
+        && d.price is number && d.price > 0 && d.price <= 1000000
+        && d.discountPrice is number && d.discountPrice >= 0 && d.discountPrice < d.price
+        && isValidUrlOrEmpty(d.imageUrl)
+        && (!d.keys().hasAny(['imageFileId']) || isValidOptionalString(d.imageFileId, 160))
+        && isValidOptionalString(d.localDrawableName, 80)
+        && isValidId(d.categoryId)
+        && isValidString(d.categoryName, 1, 100)
+        && d.available is bool
+        && d.featured is bool
+        && d.popular is bool
+        && (!d.keys().hasAny(['variants']) || (d.variants is list && d.variants.size() <= 40))
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidBanner(d) {
+      return d.keys().hasAll(['id', 'title', 'subtitle', 'imageUrl', 'localDrawableName', 'active', 'sortOrder', 'createdAt'])
+        && d.keys().hasOnly(['id', 'title', 'subtitle', 'imageUrl', 'imageFileId', 'localDrawableName', 'active', 'sortOrder', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidString(d.title, 1, 160)
+        && isValidOptionalString(d.subtitle, 400)
+        && isValidUrlOrEmpty(d.imageUrl)
+        && (!d.keys().hasAny(['imageFileId']) || isValidOptionalString(d.imageFileId, 160))
+        && isValidOptionalString(d.localDrawableName, 80)
+        && d.active is bool
+        && d.sortOrder is int && d.sortOrder >= 0 && d.sortOrder <= 1000
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidOrderTimestampMap(ts) {
+      return ts is map
+        && ts.keys().hasOnly([
+          'orderPlacedAt', 'orderConfirmedAt', 'riderAssignedAt', 'riderAcceptedAt',
+          'sentToKitchenAt', 'preparationStartedAt', 'preparationCompletedAt',
+          'outForDeliveryAt', 'deliveredAt', 'cancelledAt'
+        ])
+        && (!('orderPlacedAt' in ts) || isValidTimestamp(ts.orderPlacedAt))
+        && (!('orderConfirmedAt' in ts) || isValidTimestamp(ts.orderConfirmedAt))
+        && (!('riderAssignedAt' in ts) || isValidTimestamp(ts.riderAssignedAt))
+        && (!('riderAcceptedAt' in ts) || isValidTimestamp(ts.riderAcceptedAt))
+        && (!('sentToKitchenAt' in ts) || isValidTimestamp(ts.sentToKitchenAt))
+        && (!('preparationStartedAt' in ts) || isValidTimestamp(ts.preparationStartedAt))
+        && (!('preparationCompletedAt' in ts) || isValidTimestamp(ts.preparationCompletedAt))
+        && (!('outForDeliveryAt' in ts) || isValidTimestamp(ts.outForDeliveryAt))
+        && (!('deliveredAt' in ts) || isValidTimestamp(ts.deliveredAt))
+        && (!('cancelledAt' in ts) || isValidTimestamp(ts.cancelledAt));
+    }
+
+    function timestampsImmutable(oldData, newData) {
+      return !('timestamps' in oldData)
+        || (
+          ('timestamps' in newData)
+          && (!('orderPlacedAt' in oldData.timestamps) || (('orderPlacedAt' in newData.timestamps) && newData.timestamps.orderPlacedAt == oldData.timestamps.orderPlacedAt))
+          && (!('orderConfirmedAt' in oldData.timestamps) || (('orderConfirmedAt' in newData.timestamps) && newData.timestamps.orderConfirmedAt == oldData.timestamps.orderConfirmedAt))
+          && (!('riderAssignedAt' in oldData.timestamps) || (('riderAssignedAt' in newData.timestamps) && newData.timestamps.riderAssignedAt == oldData.timestamps.riderAssignedAt))
+          && (!('riderAcceptedAt' in oldData.timestamps) || (('riderAcceptedAt' in newData.timestamps) && newData.timestamps.riderAcceptedAt == oldData.timestamps.riderAcceptedAt))
+          && (!('sentToKitchenAt' in oldData.timestamps) || (('sentToKitchenAt' in newData.timestamps) && newData.timestamps.sentToKitchenAt == oldData.timestamps.sentToKitchenAt))
+          && (!('preparationStartedAt' in oldData.timestamps) || (('preparationStartedAt' in newData.timestamps) && newData.timestamps.preparationStartedAt == oldData.timestamps.preparationStartedAt))
+          && (!('preparationCompletedAt' in oldData.timestamps) || (('preparationCompletedAt' in newData.timestamps) && newData.timestamps.preparationCompletedAt == oldData.timestamps.preparationCompletedAt))
+          && (!('outForDeliveryAt' in oldData.timestamps) || (('outForDeliveryAt' in newData.timestamps) && newData.timestamps.outForDeliveryAt == oldData.timestamps.outForDeliveryAt))
+          && (!('deliveredAt' in oldData.timestamps) || (('deliveredAt' in newData.timestamps) && newData.timestamps.deliveredAt == oldData.timestamps.deliveredAt))
+          && (!('cancelledAt' in oldData.timestamps) || (('cancelledAt' in newData.timestamps) && newData.timestamps.cancelledAt == oldData.timestamps.cancelledAt))
+        );
+    }
+
+    function isValidOrderFields(d) {
+      return d.orderId is string && d.orderId.size() >= 1 && d.orderId.size() <= 128 && d.orderId.matches('^[a-zA-Z0-9_-]+$')
+        && isValidString(d.customerId, 1, 128)
+        && isValidString(d.customerName, 1, 120)
+        && isValidString(d.customerPhone, 5, 40)
+        && isValidString(d.deliveryAddress, 3, 400)
+        && isValidOptionalString(d.notes, 500)
+        && d.items is list && d.items.size() >= 1 && d.items.size() <= 100
+        && d.subtotal is number && d.subtotal > 0 && d.subtotal <= 10000000
+        && d.deliveryFee is number && d.deliveryFee >= 0 && d.deliveryFee <= 100000
+        && (!('discountAmount' in d) || (d.discountAmount is number && d.discountAmount >= 0 && d.discountAmount <= 10000000))
+        && d.totalAmount is number && d.totalAmount > 0 && d.totalAmount <= 10000000
+        && isValidString(d.paymentMethod, 1, 80)
+        && isValidString(d.paymentStatus, 1, 60)
+        && d.orderStatus in ['Pending', 'Confirmed', 'Assigned', 'Assigned to Rider', 'Rider Accepted', 'Sent to Kitchen', 'Preparing', 'Ready', 'Picked Up', 'Out for Delivery', 'Delivered', 'Cancelled']
+        && isValidOptionalString(d.riderId, 128)
+        && isValidOptionalString(d.riderName, 120)
+        && d.pointsEarned is int && d.pointsEarned >= 0 && d.pointsEarned <= 100000
+        && (!('timestamps' in d) || isValidOrderTimestampMap(d.timestamps))
+        && (!('printCount' in d) || (d.printCount is int && d.printCount >= 0 && d.printCount <= 10000))
+        && (!('lastPrintedAt' in d) || isValidTimestamp(d.lastPrintedAt))
+        && (!('lastPrintedBy' in d) || isValidOptionalString(d.lastPrintedBy, 128))
+        && isValidTimestamp(d.createdAt)
+        && d.updatedAt is timestamp;
+    }
+
+    function isValidOrder(d) {
+      return d.keys().hasOnly([
+          'orderId', 'customerId', 'customerName', 'customerPhone', 'deliveryAddress',
+          'notes', 'items', 'subtotal', 'deliveryFee', 'discountAmount', 'totalAmount', 'paymentMethod',
+          'paymentStatus', 'orderStatus', 'riderId', 'riderName', 'pointsEarned',
+          'timestamps', 'printCount', 'lastPrintedAt', 'lastPrintedBy',
+          'createdAt', 'updatedAt'
+        ])
+        && isValidOrderFields(d);
+    }
+
+    function isValidTimelineEvent(d) {
+      return d.keys().hasAll(['id', 'orderId', 'eventType', 'timestamp', 'userId', 'userRole', 'userName'])
+        && d.keys().hasOnly(['id', 'orderId', 'eventType', 'timestamp', 'userId', 'userRole', 'userName', 'notes'])
+        && isValidId(d.id)
+        && isValidId(d.orderId)
+        && d.eventType in [
+          'ORDER_PLACED', 'ORDER_CONFIRMED', 'RIDER_ASSIGNED', 'RIDER_ACCEPTED',
+          'SENT_TO_KITCHEN', 'PREPARATION_STARTED', 'PREPARATION_COMPLETED',
+          'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'
+        ]
+        && isValidTimestamp(d.timestamp)
+        && isValidString(d.userId, 1, 128)
+        && d.userRole in ['CUSTOMER', 'ADMIN', 'RIDER']
+        && isValidString(d.userName, 1, 120)
+        && (!d.keys().hasAny(['notes']) || isValidOptionalString(d.notes, 300));
+    }
+
+    function isValidPayment(d) {
+      return d.keys().hasAll(['id', 'orderId', 'customerId', 'method', 'accountTitle', 'accountNumber', 'amount', 'status', 'createdAt'])
+        && d.keys().hasOnly(['id', 'orderId', 'customerId', 'method', 'accountTitle', 'accountNumber', 'amount', 'status', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && isValidId(d.orderId)
+        && isValidString(d.customerId, 1, 128)
+        && isValidString(d.method, 1, 80)
+        && isValidOptionalString(d.accountTitle, 120)
+        && isValidOptionalString(d.accountNumber, 80)
+        && d.amount is number && d.amount >= 0 && d.amount <= 10000000
+        && isValidString(d.status, 1, 60)
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidSettings(d) {
+      return d.keys().hasAll(['restaurantName', 'logoUrl', 'phone', 'whatsappNumber', 'address', 'openingHours', 'closingHours', 'deliveryCharges', 'minimumOrderAmount', 'loyaltyPointsPercent'])
+        && d.keys().hasOnly(['restaurantName', 'logoUrl', 'phone', 'whatsappNumber', 'address', 'openingHours', 'closingHours', 'deliveryCharges', 'minimumOrderAmount', 'loyaltyPointsPercent', 'imagekitPublicKey', 'imagekitAuthEndpoint', 'updatedAt'])
+        && isValidString(d.restaurantName, 1, 120)
+        && isValidUrlOrEmpty(d.logoUrl)
+        && isValidOptionalString(d.phone, 40)
+        && isValidOptionalString(d.whatsappNumber, 40)
+        && isValidOptionalString(d.address, 400)
+        && isValidOptionalString(d.openingHours, 60)
+        && isValidOptionalString(d.closingHours, 60)
+        && d.deliveryCharges is number && d.deliveryCharges >= 0 && d.deliveryCharges <= 100000
+        && d.minimumOrderAmount is number && d.minimumOrderAmount >= 0 && d.minimumOrderAmount <= 100000
+        && d.loyaltyPointsPercent is int && d.loyaltyPointsPercent >= 0 && d.loyaltyPointsPercent <= 100
+        && (!d.keys().hasAny(['imagekitPublicKey']) || isValidOptionalString(d.imagekitPublicKey, 160))
+        && (!d.keys().hasAny(['imagekitAuthEndpoint']) || isValidUrlOrEmpty(d.imagekitAuthEndpoint));
+    }
+
+    function isValidPaymentMethod(d) {
+      return d.keys().hasAll(['methodCode', 'displayName', 'accountTitle', 'accountNumber', 'enabled', 'instructions'])
+        && d.keys().hasOnly(['methodCode', 'displayName', 'accountTitle', 'accountNumber', 'enabled', 'instructions', 'updatedAt'])
+        && isValidId(d.methodCode)
+        && isValidString(d.displayName, 1, 80)
+        && isValidOptionalString(d.accountTitle, 120)
+        && isValidOptionalString(d.accountNumber, 80)
+        && d.enabled is bool
+        && isValidOptionalString(d.instructions, 500);
+    }
+
+    function isValidChat(d) {
+      return d.keys().hasAll(['id', 'orderId', 'senderId', 'customerId', 'riderId', 'senderRole', 'senderName', 'message', 'createdAt'])
+        && d.keys().hasOnly(['id', 'orderId', 'senderId', 'customerId', 'riderId', 'senderRole', 'senderName', 'message', 'createdAt'])
+        && isValidId(d.id)
+        && isValidString(d.orderId, 1, 128)
+        && isValidString(d.senderId, 1, 128)
+        && isValidOptionalString(d.customerId, 128)
+        && isValidOptionalString(d.riderId, 128)
+        && d.senderRole in ['CUSTOMER', 'ADMIN', 'RIDER']
+        && isValidString(d.senderName, 1, 120)
+        && isValidString(d.message, 1, 1500)
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidGroupMember(d) {
+      // Strict privacy guard: no phone numbers, addresses, emails, or payment fields permitted.
+      return d.keys().hasAll(['uid', 'name', 'role', 'profileImageUrl', 'online', 'lastSeenAt', 'lastReadAt'])
+        && d.keys().hasOnly(['uid', 'name', 'role', 'profileImageUrl', 'online', 'lastSeenAt', 'lastReadAt'])
+        && isValidString(d.uid, 1, 128)
+        && isValidString(d.name, 1, 120)
+        && d.role in ['ADMIN', 'CUSTOMER', 'RIDER']
+        && isValidUrlOrEmpty(d.profileImageUrl)
+        && d.online is bool
+        && isValidTimestamp(d.lastSeenAt)
+        && isValidTimestamp(d.lastReadAt);
+    }
+
+    function isValidGroupMessage(d) {
+      return d.keys().hasAll(['id', 'senderId', 'senderName', 'senderRole', 'senderAvatarUrl', 'message', 'imageUrl', 'createdAt'])
+        && d.keys().hasOnly(['id', 'senderId', 'senderName', 'senderRole', 'senderAvatarUrl', 'message', 'imageUrl', 'createdAt'])
+        && isValidId(d.id)
+        && isValidString(d.senderId, 1, 128)
+        && isValidString(d.senderName, 1, 120)
+        && d.senderRole in ['ADMIN', 'CUSTOMER', 'RIDER']
+        && isValidUrlOrEmpty(d.senderAvatarUrl)
+        && isValidOptionalString(d.message, 2000)
+        && isValidUrlOrEmpty(d.imageUrl)
+        && (d.message.size() >= 1 || d.imageUrl.size() >= 8)
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidNotification(d) {
+      return d.keys().hasAll(['id', 'targetRole', 'targetUid', 'senderId', 'orderId', 'title', 'body', 'type', 'read', 'createdAt'])
+        && d.keys().hasOnly(['id', 'targetRole', 'targetUid', 'senderId', 'orderId', 'title', 'body', 'type', 'read', 'createdAt', 'updatedAt'])
+        && isValidId(d.id)
+        && d.targetRole in ['ADMIN', 'CUSTOMER', 'RIDER']
+        && isValidOptionalString(d.targetUid, 128)
+        && isValidString(d.senderId, 1, 128)
+        && isValidOptionalString(d.orderId, 128)
+        && isValidString(d.title, 1, 160)
+        && isValidString(d.body, 1, 500)
+        && isValidString(d.type, 1, 60)
+        && d.read is bool
+        && isValidTimestamp(d.createdAt);
+    }
+
+    function isValidReward(d) {
+      return d.keys().hasAll(['id', 'customerId', 'title', 'description', 'points', 'type', 'redeemable', 'requiredPoints', 'orderId', 'createdAt'])
+        && d.keys().hasOnly(['id', 'customerId', 'title', 'description', 'points', 'type', 'redeemable', 'requiredPoints', 'orderId', 'createdAt'])
+        && isValidId(d.id)
+        && isValidOptionalString(d.customerId, 128)
+        && isValidString(d.title, 1, 160)
+        && isValidOptionalString(d.description, 400)
+        && d.points is int && d.points >= -100000 && d.points <= 100000
+        && d.type in ['EARNED', 'REDEEMED', 'REDEEMABLE_OFFER']
+        && d.redeemable is bool
+        && d.requiredPoints is int && d.requiredPoints >= 0 && d.requiredPoints <= 100000
+        && isValidOptionalString(d.orderId, 128)
+        && isValidTimestamp(d.createdAt);
+    }
+
+    match /admins/{adminId} {
+      allow get: if isOwner(adminId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isAdmin() && isValidId(adminId) && isValidAdmin(incoming()) && incoming().id == adminId;
+      allow update: if isAdmin() && isValidAdmin(incoming()) && incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin();
+    }
+
+    match /customers/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if (isOwner(userId) || isAdmin())
+        && isValidId(userId)
+        && isValidCustomer(incoming())
+        && incoming().id == userId
+        && (isAdmin() || (incoming().active == true && incoming().loyaltyPoints <= 100));
+      allow update: if isValidCustomer(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && (isAdmin() || (isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'email', 'phone', 'address', 'loyaltyPoints', 'updatedAt'])));
+      allow delete: if isAdmin();
+    }
+
+    match /riders/{riderId} {
+      allow get: if isAdmin() || isOwner(riderId)
+        || (isSignedIn() && existing().linkedUid == request.auth.uid)
+        || (isSignedIn() && 'email_verified' in request.auth.token && request.auth.token.email_verified == true
+            && 'email' in request.auth.token && existing().email != '' && existing().email == request.auth.token.email);
+      allow list: if isAdmin()
+        || (isSignedIn() && resource.data.linkedUid == request.auth.uid)
+        || (isSignedIn() && 'email_verified' in request.auth.token && request.auth.token.email_verified == true
+            && 'email' in request.auth.token && resource.data.email != '' && resource.data.email == request.auth.token.email);
+      allow create: if isValidId(riderId) && isValidRider(incoming()) && incoming().id == riderId
+        && (isAdmin() || (isOwner(riderId) && incoming().linkedUid == request.auth.uid && incoming().totalDeliveries == 0 && incoming().totalEarnings == 0));
+      allow update: if isValidRider(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && (isAdmin()
+            || ((isOwner(riderId) || existing().linkedUid == request.auth.uid)
+                && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'email', 'phone', 'vehicleInfo', 'profileImageUrl', 'active', 'totalDeliveries', 'totalEarnings', 'updatedAt']))
+            || (isSignedIn() && 'email_verified' in request.auth.token && request.auth.token.email_verified == true
+                && 'email' in request.auth.token && existing().email != '' && existing().email == request.auth.token.email
+                && incoming().linkedUid == request.auth.uid
+                && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['linkedUid', 'name', 'phone', 'vehicleInfo', 'updatedAt'])));
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow get, list: if isSignedIn();
+      allow create: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming()) && incoming().id == categoryId;
+      allow update: if isAdmin() && isValidCategory(incoming()) && incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow get, list: if isSignedIn();
+      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming()) && incoming().id == productId;
+      allow update: if isAdmin() && isValidProduct(incoming()) && incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin();
+    }
+
+    match /banners/{bannerId} {
+      allow get, list: if isSignedIn();
+      allow create: if isAdmin() && isValidId(bannerId) && isValidBanner(incoming()) && incoming().id == bannerId;
+      allow update: if isAdmin() && isValidBanner(incoming()) && incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow get: if isAdmin() || (isSignedIn() && (existing().customerId == request.auth.uid || existing().riderId == request.auth.uid));
+      allow list: if isAdmin() || (isSignedIn() && (resource.data.customerId == request.auth.uid || resource.data.riderId == request.auth.uid));
+      allow create: if isSignedIn()
+        && isValidId(orderId)
+        && isValidOrder(incoming())
+        && incoming().orderId == orderId
+        && incoming().customerId == request.auth.uid
+        && incoming().orderStatus == 'Pending';
+      allow update: if isValidOrderFields(incoming())
+        && incoming().orderId == existing().orderId
+        && incoming().customerId == existing().customerId
+        && incoming().createdAt == existing().createdAt
+        && timestampsImmutable(existing(), incoming())
+        && (
+          (isAdmin()
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                'orderStatus', 'paymentStatus', 'riderId', 'riderName',
+                'timestamps', 'printCount', 'lastPrintedAt', 'lastPrintedBy',
+                'notes', 'deliveryAddress', 'discountAmount', 'totalAmount', 'updatedAt'
+              ]))
+          || (isSignedIn() && existing().riderId == request.auth.uid
+              && incoming().orderStatus in ['Rider Accepted', 'Sent to Kitchen', 'Picked Up', 'Out for Delivery', 'Delivered']
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['orderStatus', 'paymentStatus', 'timestamps', 'updatedAt']))
+          || (isSignedIn() && existing().customerId == request.auth.uid
+              && existing().orderStatus == 'Pending'
+              && incoming().orderStatus == 'Cancelled'
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['orderStatus', 'timestamps', 'updatedAt']))
+        );
+      allow delete: if isAdmin();
+
+      match /timeline/{eventId} {
+        allow get, list: if isAdmin() || (
+          isSignedIn() && exists(/databases/$(database)/documents/orders/$(orderId)) && (
+            get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid
+            || get(/databases/$(database)/documents/orders/$(orderId)).data.riderId == request.auth.uid
+          )
+        );
+        allow create: if isSignedIn()
+          && isValidId(eventId)
+          && isValidTimelineEvent(incoming())
+          && incoming().id == eventId
+          && incoming().orderId == orderId
+          && incoming().userId == request.auth.uid
+          && (
+            (isAdmin() && incoming().userRole == 'ADMIN')
+            || (incoming().userRole == 'RIDER'
+                && exists(/databases/$(database)/documents/orders/$(orderId))
+                && get(/databases/$(database)/documents/orders/$(orderId)).data.riderId == request.auth.uid
+                && incoming().eventType in ['RIDER_ACCEPTED', 'SENT_TO_KITCHEN', 'OUT_FOR_DELIVERY', 'DELIVERED'])
+            || (incoming().userRole == 'CUSTOMER'
+                && incoming().eventType in ['ORDER_PLACED', 'CANCELLED']
+                && (!exists(/databases/$(database)/documents/orders/$(orderId))
+                    || get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid))
+          );
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
+    }
+
+    match /payments/{paymentId} {
+      allow get: if isAdmin() || (isSignedIn() && existing().customerId == request.auth.uid);
+      allow list: if isAdmin() || (isSignedIn() && resource.data.customerId == request.auth.uid);
+      allow create: if isSignedIn()
+        && isValidId(paymentId)
+        && isValidPayment(incoming())
+        && incoming().id == paymentId
+        && incoming().customerId == request.auth.uid;
+      allow update: if isValidPayment(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && (isAdmin()
+            || (isSignedIn()
+                && exists(/databases/$(database)/documents/orders/$(existing().orderId))
+                && get(/databases/$(database)/documents/orders/$(existing().orderId)).data.riderId == request.auth.uid
+                && incoming().status == 'Paid'
+                && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])));
+      allow delete: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isAdmin() && isValidId(settingId) && isValidSettings(incoming());
+      allow delete: if isAdmin();
+    }
+
+    match /payment_methods/{methodId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isAdmin() && isValidId(methodId) && isValidPaymentMethod(incoming()) && incoming().methodCode == methodId;
+      allow delete: if isAdmin();
+    }
+
+    match /chats/{messageId} {
+      allow get: if isAdmin() || (isSignedIn() && (existing().senderId == request.auth.uid || existing().customerId == request.auth.uid || existing().riderId == request.auth.uid));
+      allow list: if isAdmin() || (isSignedIn() && (resource.data.senderId == request.auth.uid || resource.data.customerId == request.auth.uid || resource.data.riderId == request.auth.uid));
+      allow create: if isSignedIn() && isValidId(messageId) && isValidChat(incoming()) && incoming().id == messageId && incoming().senderId == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    match /chatRooms/{roomId} {
+      allow get: if isSignedIn() && roomId == 'mainGroup';
+      allow list, write: if false;
+
+      match /members/{memberId} {
+        allow get, list: if isSignedIn() && roomId == 'mainGroup';
+        allow create, update: if isSignedIn()
+          && roomId == 'mainGroup'
+          && isOwner(memberId)
+          && isValidGroupMember(incoming())
+          && incoming().uid == request.auth.uid
+          && (incoming().role != 'ADMIN' || isAdmin());
+        allow delete: if roomId == 'mainGroup' && (isAdmin() || isOwner(memberId));
+      }
+
+      match /messages/{messageId} {
+        allow get, list: if isSignedIn() && roomId == 'mainGroup';
+        allow create: if isSignedIn()
+          && roomId == 'mainGroup'
+          && isValidId(messageId)
+          && isValidGroupMessage(incoming())
+          && incoming().id == messageId
+          && incoming().senderId == request.auth.uid
+          && (incoming().senderRole != 'ADMIN' || isAdmin());
+        allow update: if false;
+        allow delete: if roomId == 'mainGroup' && isAdmin();
+      }
+    }
+
+    match /notifications/{notificationId} {
+      allow get: if isAdmin() || (isSignedIn() && (existing().targetUid == request.auth.uid || existing().senderId == request.auth.uid));
+      allow list: if isAdmin() || (isSignedIn() && (resource.data.targetUid == request.auth.uid || resource.data.senderId == request.auth.uid));
+      allow create: if isSignedIn() && isValidId(notificationId) && isValidNotification(incoming()) && incoming().id == notificationId && incoming().senderId == request.auth.uid;
+      allow update: if isValidNotification(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && (isAdmin() || (isSignedIn() && existing().targetUid == request.auth.uid))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'updatedAt']);
+      allow delete: if isAdmin();
+    }
+
+    match /rewards/{rewardId} {
+      allow get: if isAdmin() || (isSignedIn() && (existing().type == 'REDEEMABLE_OFFER' || existing().customerId == request.auth.uid));
+      allow list: if isAdmin() || (isSignedIn() && (resource.data.type == 'REDEEMABLE_OFFER' || resource.data.customerId == request.auth.uid));
+      allow create: if isValidId(rewardId) && isValidReward(incoming()) && incoming().id == rewardId
+        && (isAdmin() || (isSignedIn() && incoming().customerId == request.auth.uid && incoming().type != 'REDEEMABLE_OFFER'));
+      allow update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

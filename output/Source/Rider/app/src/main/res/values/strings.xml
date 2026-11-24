@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Dera Rider</string>
+    <string name="rider_title">Dera Shanwari Rider</string>
+    <string name="rider_subtitle">Fast Delivery Fleet Partner</string>
+    <string name="rider_auth_hint">Sign in with your Google Account to receive live delivery assignments from Dera Shanwari.</string>
+    <string name="live_tracking_coming_soon">Real-Time Cloud Sync Active • Delivery updates reflect live in Customer &amp; Admin apps.</string>
+</resources>

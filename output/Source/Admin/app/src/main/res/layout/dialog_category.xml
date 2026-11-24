@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_glass_card"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <ImageView
+        android:id="@+id/iv_cat_preview"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@drawable/bg_glass_card"
+        android:contentDescription="Category Image Preview"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_food_tikka_bbq" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cat_camera"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:text="Camera"
+            android:textColor="@color/admin_white"
+            android:textSize="12sp"
+            app:backgroundTint="@color/admin_orange"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cat_gallery"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:text="Gallery"
+            android:textColor="@color/admin_orange_dark"
+            android:textSize="12sp"
+            app:cornerRadius="10dp"
+            app:strokeColor="@color/admin_orange" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cat_remove_photo"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:text="Remove"
+            android:textColor="@color/admin_danger"
+            android:textSize="12sp"
+            app:cornerRadius="10dp"
+            app:strokeColor="@color/admin_danger" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_cat_upload"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:max="100"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_cat_upload_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Tap Camera or Gallery to upload category photo"
+        android:textColor="@color/admin_text_muted"
+        android:textSize="11.5sp" />
+
+    <EditText
+        android:id="@+id/et_cat_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Category Name" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_cat_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="true"
+        android:text="Available" />
+</LinearLayout>

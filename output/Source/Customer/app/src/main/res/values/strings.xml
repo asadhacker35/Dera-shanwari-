@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Dera Shanwari</string>
+    <string name="tagline">Authentic Charcoal &amp; Karahi Kitchen</string>
+    <string name="demo_mode_badge">DEMO MODE</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_menu">Menu</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_account">Account</string>
+    <string name="login_title">Welcome to Dera Shanwari</string>
+    <string name="login_subtitle">Enter your phone number to order sizzling karahi &amp; BBQ</string>
+    <string name="send_otp">Send Demo OTP</string>
+    <string name="verify_otp">Verify &amp; Continue</string>
+    <string name="demo_fill_btn">Quick Demo Customer Login</string>
+    <string name="search_hint">Search karahi, tikka, burger, drinks...</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="checkout">Proceed to Checkout</string>
+    <string name="place_order">Place Order</string>
+    <string name="send_whatsapp">Send Order to WhatsApp</string>
+    <string name="currency_prefix">Rs. </string>
+    <string name="manual_payment_note">Manual verification: Please transfer exact total to the account above and share receipt via WhatsApp after placing order.</string>
+    <string name="group_chat_title">DERA SHANWARI – OFFICIAL GROUP</string>
+    <string name="digital_receipt">Digital Receipt</string>
+</resources>

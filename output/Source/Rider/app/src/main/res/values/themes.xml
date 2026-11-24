@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DeraRider" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/rider_orange</item>
+        <item name="colorOnPrimary">@color/rider_white</item>
+        <item name="colorPrimaryContainer">@color/rider_glass_amber</item>
+        <item name="colorOnPrimaryContainer">@color/rider_text_primary</item>
+        <item name="colorSecondary">@color/rider_amber</item>
+        <item name="colorOnSecondary">@color/rider_text_primary</item>
+        <item name="android:colorBackground">@color/rider_canvas</item>
+        <item name="colorSurface">@color/rider_surface</item>
+        <item name="colorOnSurface">@color/rider_text_primary</item>
+        <item name="android:statusBarColor">@color/rider_canvas</item>
+        <item name="android:navigationBarColor">@color/rider_white</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.DeraRider.Splash" parent="Theme.DeraRider">
+        <item name="android:windowBackground">@drawable/bg_glass_canvas</item>
+        <item name="android:statusBarColor">@color/rider_canvas</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

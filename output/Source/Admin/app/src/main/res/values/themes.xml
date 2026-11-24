@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DeraAdmin" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/admin_orange</item>
+        <item name="colorOnPrimary">@color/admin_white</item>
+        <item name="colorPrimaryContainer">@color/admin_glass_amber</item>
+        <item name="colorOnPrimaryContainer">@color/admin_text_primary</item>
+        <item name="colorSecondary">@color/admin_yellow</item>
+        <item name="colorOnSecondary">@color/admin_text_primary</item>
+        <item name="android:colorBackground">@color/admin_canvas</item>
+        <item name="colorSurface">@color/admin_surface</item>
+        <item name="colorOnSurface">@color/admin_text_primary</item>
+        <item name="android:statusBarColor">@color/admin_canvas</item>
+        <item name="android:navigationBarColor">@color/admin_white</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.DeraAdmin.Splash" parent="Theme.DeraAdmin">
+        <item name="android:windowBackground">@drawable/bg_glass_canvas</item>
+        <item name="android:statusBarColor">@color/admin_canvas</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Dera Admin</string>
+    <string name="admin_title">Dera Shanwari Admin</string>
+    <string name="admin_subtitle">Kitchen, Menu, Orders &amp; Fleet Control</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_catalog">Menu</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_people">People</string>
+    <string name="nav_more">More</string>
+    <string name="admin_auth_hint">Sign in with your authorized Admin Google Account (e.g. asadhacker770@gmail.com) to manage live Cloud Firestore data.</string>
+    <string name="group_chat_title">DERA SHANWARI – OFFICIAL GROUP</string>
+</resources>
